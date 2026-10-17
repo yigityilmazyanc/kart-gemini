@@ -1,0 +1,11 @@
+{
+  "viewport": { "width": 720, "height": 1280 },
+  "url": "?seed=7&bombs=40&lane=50",
+  "steps": [
+    { "advance": 12000 },
+    { "expect": { "seed": 7, "elapsed": 10133, "phase": "over", "lives": 0, "score": 5 } },
+    { "act": "restart", "args": [7] },
+    { "advance": 12000 },
+    { "expect": { "seed": 7, "elapsed": 10133, "phase": "over", "lives": 0, "score": 5 } }
+  ]
+}

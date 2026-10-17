@@ -1,0 +1,13 @@
+{
+  "viewport": { "width": 720, "height": 1280 },
+  "url": "?seed=7&bombs=0&lane=20",
+  "steps": [
+    { "expect": { "phase": "playing", "score": 0, "lives": 3, "basketX": 360 } },
+    { "act": "moveTo", "args": [144] },
+    { "advance": 6000 },
+    { "expect": { "basketX": 144, "score": { "gte": 1 } } },
+    { "screenshot": "playing" },
+    { "advance": 14000 },
+    { "expect": { "phase": "playing", "lives": 3, "score": { "gte": 10 }, "speed": { "gt": 300 } } }
+  ]
+}

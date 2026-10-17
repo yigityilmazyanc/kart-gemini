@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.vite/
+android/app/build/
+android/.gradle/
+*.apk
+*.aab
+*.keystore
+*.jks
+local.properties
+.env
+.env.*

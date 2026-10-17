@@ -1,0 +1,42 @@
+{
+  "bg": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "bg",
+    "license": "project-original",
+    "key": "298e5b386f3b67c7",
+    "sha256": "0319997622e15749"
+  },
+  "basket": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "basket",
+    "license": "project-original",
+    "key": "fb19d7640d7ab9fa",
+    "sha256": "35a550cfc703a1b2"
+  },
+  "star": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "star",
+    "license": "project-original",
+    "key": "1bd533f10ff81010",
+    "sha256": "6c743835fe83b5ab"
+  },
+  "bomb": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "bomb",
+    "license": "project-original",
+    "key": "c0c79b985fb19340",
+    "sha256": "414fa33d39395289"
+  },
+  "heart": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "heart",
+    "license": "project-original",
+    "key": "036e2d6bcdc23036",
+    "sha256": "8020ec209c07ef93"
+  }
+}

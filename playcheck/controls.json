@@ -1,0 +1,18 @@
+{
+  "viewport": { "width": 720, "height": 1280 },
+  "url": "?seed=3&bombs=0",
+  "steps": [
+    { "act": "left" },
+    { "advance": 400 },
+    { "expect": { "basketX": 220 } },
+    { "act": "right" }, { "act": "right" },
+    { "advance": 600 },
+    { "expect": { "basketX": 500 } },
+    { "act": "moveTo", "args": [9999] },
+    { "advance": 600 },
+    { "expect": { "basketX": 630 } },
+    { "act": "moveTo", "args": ["abc"] },
+    { "advance": 300 },
+    { "expect": { "basketX": 630 } }
+  ]
+}

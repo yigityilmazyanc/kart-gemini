@@ -1,0 +1,22 @@
+{
+  "style": {
+    "palette": {
+      "skyTop": "#0b1030",
+      "skyBottom": "#2a2a78",
+      "gold": "#ffd166",
+      "goldDark": "#e09f1f",
+      "straw": "#d99a4e",
+      "strawDark": "#9a5f2a",
+      "ink": "#2b2d42",
+      "red": "#d7263d",
+      "spark": "#ffb703"
+    }
+  },
+  "assets": [
+    {"id":"bg","backend":"svg","template":"bg","size":[720,1280]},
+    {"id":"basket","backend":"svg","template":"basket","size":[180,110]},
+    {"id":"star","backend":"svg","template":"star","size":[72,72]},
+    {"id":"bomb","backend":"svg","template":"bomb","size":[72,72]},
+    {"id":"heart","backend":"svg","template":"heart","size":[48,48]}
+  ]
+}

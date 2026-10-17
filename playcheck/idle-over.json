@@ -1,0 +1,59 @@
+{
+  "viewport": {
+    "width": 720,
+    "height": 1280
+  },
+  "url": "?seed=7",
+  "steps": [
+    {
+      "expect": {
+        "phase": "playing",
+        "lives": 3
+      }
+    },
+    {
+      "advance": 90000
+    },
+    {
+      "expect": {
+        "phase": "over",
+        "lives": 0,
+        "basketX": 360
+      }
+    },
+    {
+      "act": "left"
+    },
+    {
+      "advance": 500
+    },
+    {
+      "expect": {
+        "phase": "over",
+        "basketX": 360
+      }
+    },
+    {
+      "screenshot": "over"
+    },
+    {
+      "click": [
+        360,
+        740
+      ]
+    },
+    {
+      "advance": 200
+    },
+    {
+      "expect": {
+        "phase": "playing",
+        "score": 0,
+        "lives": 3,
+        "elapsed": {
+          "lt": 1000
+        }
+      }
+    }
+  ]
+}
