@@ -3,6 +3,8 @@
 Tablet odaklı (1280×720 yatay), Balatro benzeri simya temalı poker ve sinerji roguelike kart oyunu.
 52 kartlık desteden 1–5 kartlık eller oynayarak **Fiş × Çarpan** puanı üret, **Tılsım Rafı**'ndaki tılsımlar, **El Yazmaları** (el seviyesi geliştirmeleri) ve **Kart Efsunları** (Kristal, Ateş, Çelik, Altın) ile sinerji kurarak 3 Bölüm (9 Sınav) boyunca artan hedef puanları ve **Başsimyager (Boss)** engellerini aş.
 
+**▶ Hemen oyna (kurulum gerekmez):** https://yigityilmazyanc.github.io/kart-gemini/
+
 ## Kurulum ve oynama
 Gereken tek şey [Node.js](https://nodejs.org) 20 veya üstü.
 
