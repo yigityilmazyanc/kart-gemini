@@ -1,5 +1,5 @@
-import { exposeHook } from "@agi/kit";
-import { type FloatOptions, SceneGate, coverImage, floatText, loadManifest, urlParams } from "@agi/kit/phaser";
+import { exposeHook } from "../kit/index";
+import { type FloatOptions, SceneGate, coverImage, floatText, loadManifest, urlParams } from "../kit/phaser/index";
 import Phaser from "phaser";
 import manifest from "../../assets/manifest.json";
 import { BOSS_RULES, type BossRuleId, TALISMANS, type TalismanId } from "../logic/catalog";

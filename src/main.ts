@@ -1,4 +1,4 @@
-import { captureErrors } from "@agi/kit";
+import { captureErrors } from "./kit/index";
 import Phaser from "phaser";
 import { GameScene, H, W } from "./scenes/GameScene";
 

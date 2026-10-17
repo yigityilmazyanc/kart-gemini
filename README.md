@@ -3,20 +3,33 @@
 Tablet odaklı (1280×720 yatay), Balatro benzeri simya temalı poker ve sinerji roguelike kart oyunu.
 52 kartlık desteden 1–5 kartlık eller oynayarak **Fiş × Çarpan** puanı üret, **Tılsım Rafı**'ndaki tılsımlar, **El Yazmaları** (el seviyesi geliştirmeleri) ve **Kart Efsunları** (Kristal, Ateş, Çelik, Altın) ile sinerji kurarak 3 Bölüm (9 Sınav) boyunca artan hedef puanları ve **Başsimyager (Boss)** engellerini aş.
 
-## Çalıştırma
-Bu repo AGI'nin ortak kitini (`@agi/kit`) ve araçlarını kullanır.
+## Kurulum ve oynama
+Gereken tek şey [Node.js](https://nodejs.org) 20 veya üstü.
 
 ```bash
-npm run dev -- kart-gemini
+git clone https://github.com/yigityilmazyanc/kart-gemini.git
+cd kart-gemini
+npm install
+npm run dev
 ```
 
-Kontroller (AGI kökünden):
-- `npm run typecheck`
-- `npm test`
-- `npm run playcheck -- kart-gemini`
-- `npm run assets -- kart-gemini`
+Terminalde yazan adresi tarayıcıda aç (ör. `http://localhost:5173`). Aynı Wi-Fi'daki tablet için terminaldeki
+`Network:` adresini kullan.
+
+| Komut | Ne yapar |
+|---|---|
+| `npm run dev` | geliştirme sunucusu (yerel ağdan da erişilebilir) |
+| `npm run build` | oynanabilir statik sürümü `dist/` klasörüne derler; `dist/` herhangi bir web sunucusundan ya da alt yoldan çalışır |
+| `npm run preview` | derlenmiş sürümü yerelde sunar |
+| `npm test` | oyun mantığının birim testleri (vitest) |
+| `npm run typecheck` | TypeScript tip kontrolü |
+
+Repo tek başına çalışır: ortak yardımcılar `src/kit/` altında oyunla birlikte gelir. Oyun
+AGI atölyesiyle (özel repo) üretildi; atölye içindeyken oynanış kontrolü
+(`npm run playcheck -- kart-gemini`) ve görsel üretimi (`npm run assets -- kart-gemini`) de kullanılabilir.
 
 ## Yapı
+- `src/kit/`: oyun döngüsü yardımcıları (seed'li RNG, ajan kancası, buton, tween, sahne kapısı); AGI kitinin oyunla gelen kopyası.
 - `src/logic/cards.ts`: Saf TS kart/deste modeli ve 10 poker eli değerlendirici (`evaluateHand`).
 - `src/logic/catalog.ts`: 16 özgün Tılsım (`TALISMANS`), 6 Boss kuralı (`BOSS_RULES`), hedef eğrisi (`targetScoreForRound`) ve Simya Pazarı üreticisi (`generateShopItems`).
 - `src/logic/game.ts`: Saf TS oyun durum makinesi (`SimyaGame`), sıradan bağımsız iki aşamalı puanlama motoru (`scoreSelection`), el seçimi (`selectBest`), dükkân ve tur geçişleri.

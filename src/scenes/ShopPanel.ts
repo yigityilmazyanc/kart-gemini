@@ -1,4 +1,4 @@
-import { FONT, makeButton } from "@agi/kit/phaser";
+import { FONT, makeButton } from "../kit/phaser/index";
 import type Phaser from "phaser";
 import type { SimyaGame } from "../logic/game";
 

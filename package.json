@@ -1,15 +1,25 @@
 {
   "name": "@agi-games/kart-gemini",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Simya Eli: an alchemy-themed poker roguelike (Phaser + TypeScript)",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview --host"
+    "preview": "vite preview --host",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@agi/kit": "*",
     "phaser": "3.90.0"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
   }
 }

@@ -1,4 +1,4 @@
-import { FONT, makeButton, moveTo } from "@agi/kit/phaser";
+import { FONT, makeButton, moveTo } from "../kit/phaser/index";
 import type Phaser from "phaser";
 import { type Card, cardChips, rankLabel } from "../logic/cards";
 import { isCardDebuffed } from "../logic/catalog";

@@ -1,4 +1,4 @@
-import { Rng } from "@agi/kit";
+import { Rng } from "../kit/index";
 import {
   type Card,
   type Enhancement,
