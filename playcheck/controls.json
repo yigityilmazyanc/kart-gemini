@@ -1,18 +1,24 @@
 {
-  "viewport": { "width": 720, "height": 1280 },
-  "url": "?seed=3&bombs=0",
+  "viewport": { "width": 1280, "height": 720 },
+  "url": "?seed=3&boss=max_4_cards",
   "steps": [
-    { "act": "left" },
-    { "advance": 400 },
-    { "expect": { "basketX": 220 } },
-    { "act": "right" }, { "act": "right" },
-    { "advance": 600 },
-    { "expect": { "basketX": 500 } },
-    { "act": "moveTo", "args": [9999] },
-    { "advance": 600 },
-    { "expect": { "basketX": 630 } },
-    { "act": "moveTo", "args": ["abc"] },
-    { "advance": 300 },
-    { "expect": { "basketX": 630 } }
+    { "expect": { "phase": "playing", "bossRule": "max_4_cards", "sortMode": "rank" } },
+    { "act": "selectCards", "args": [[0, 1, 2, 3, 4]] },
+    { "expect": { "selected": { "len": 4 } } },
+    { "act": "clearSelection" },
+    { "expect": { "selected": { "len": 0 } } },
+    { "act": "selectCard", "args": [0] },
+    { "act": "selectCard", "args": [1] },
+    { "expect": { "selected": { "len": 2 } } },
+    { "act": "discardSelected" },
+    { "advance": 250 },
+    { "expect": { "discardsLeft": 2, "selected": { "len": 0 }, "hand": { "len": 8 } } },
+    { "act": "sortHand", "args": ["suit"] },
+    { "expect": { "sortMode": "suit" } },
+    { "act": "toggleHandsModal" },
+    { "expect": { "handsModal": true } },
+    { "screenshot": "hands-modal" },
+    { "act": "toggleHandsModal" },
+    { "expect": { "handsModal": false } }
   ]
 }

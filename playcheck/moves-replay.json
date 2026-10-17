@@ -1,157 +1,26 @@
 {
-  "viewport": {
-    "width": 720,
-    "height": 1280
-  },
-  "url": "?seed=11&bombs=50&lives=9&manual",
+  "viewport": { "width": 1280, "height": 720 },
+  "url": "?seed=11&target=100&gold=25&rounds=2&talismans=kizil_yakut,simyaci_feneri&manual",
   "steps": [
-    {
-      "advance": 1
-    },
-    {
-      "expect": {
-        "elapsed": 17,
-        "score": 0,
-        "lives": 9
-      }
-    },
-    {
-      "act": "moveTo",
-      "args": [
-        100
-      ]
-    },
-    {
-      "advance": 1500
-    },
-    {
-      "act": "right"
-    },
-    {
-      "advance": 700
-    },
-    {
-      "act": "moveTo",
-      "args": [
-        600
-      ]
-    },
-    {
-      "advance": 2000
-    },
-    {
-      "act": "left"
-    },
-    {
-      "act": "left"
-    },
-    {
-      "advance": 900
-    },
-    {
-      "act": "moveTo",
-      "args": [
-        360
-      ]
-    },
-    {
-      "advance": 3000
-    },
-    {
-      "act": "moveTo",
-      "args": [
-        220
-      ]
-    },
-    {
-      "advance": 2500
-    },
-    {
-      "expect": {
-        "seed": 11,
-        "phase": "playing",
-        "elapsed": 10683,
-        "score": 4,
-        "lives": 8,
-        "basketX": 220
-      }
-    },
-    {
-      "act": "restart",
-      "args": [
-        11
-      ]
-    },
-    {
-      "advance": 1
-    },
-    {
-      "expect": {
-        "elapsed": 17,
-        "score": 0,
-        "lives": 9
-      }
-    },
-    {
-      "act": "moveTo",
-      "args": [
-        100
-      ]
-    },
-    {
-      "advance": 1500
-    },
-    {
-      "act": "right"
-    },
-    {
-      "advance": 700
-    },
-    {
-      "act": "moveTo",
-      "args": [
-        600
-      ]
-    },
-    {
-      "advance": 2000
-    },
-    {
-      "act": "left"
-    },
-    {
-      "act": "left"
-    },
-    {
-      "advance": 900
-    },
-    {
-      "act": "moveTo",
-      "args": [
-        360
-      ]
-    },
-    {
-      "advance": 3000
-    },
-    {
-      "act": "moveTo",
-      "args": [
-        220
-      ]
-    },
-    {
-      "advance": 2500
-    },
-    {
-      "expect": {
-        "seed": 11,
-        "phase": "playing",
-        "elapsed": 10683,
-        "score": 4,
-        "lives": 8,
-        "basketX": 220
-      }
-    }
+    { "advance": 100 },
+    { "expect": { "phase": "playing", "round": 1, "gold": 25, "talismans": ["kizil_yakut", "simyaci_feneri"] } },
+    { "act": "selectBest" },
+    { "act": "playHand" },
+    { "advance": 300 },
+    { "expect": { "phase": "shop", "round": 1, "score": 960, "gold": 37, "rerollCost": 2 } },
+    { "act": "buyItem", "args": [0] },
+    { "expect": { "talismans": ["kizil_yakut", "simyaci_feneri", "cift_sayilar"], "gold": 32, "rerollCost": 2 } },
+    { "act": "buyItem", "args": [2] },
+    { "expect": { "gold": 28, "rerollCost": 2 } },
+    { "act": "rerollShop" },
+    { "expect": { "gold": 26, "rerollCost": 3 } },
+    { "act": "nextRound" },
+    { "advance": 200 },
+    { "expect": { "phase": "playing", "round": 2, "score": 0, "gold": 26 } },
+    { "act": "selectBest" },
+    { "act": "playHand" },
+    { "advance": 300 },
+    { "expect": { "phase": "won", "round": 2, "score": 702 } },
+    { "screenshot": "victory" }
   ]
 }

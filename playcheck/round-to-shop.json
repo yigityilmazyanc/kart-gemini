@@ -1,0 +1,15 @@
+{
+  "viewport": { "width": 1280, "height": 720 },
+  "url": "?seed=7&target=50",
+  "steps": [
+    { "expect": { "phase": "playing", "round": 1, "score": 0, "handsLeft": 4, "discardsLeft": 3, "hand": { "len": 8 } } },
+    { "act": "selectBest" },
+    { "advance": 250 },
+    { "expect": { "selected": ["10H", "10D"], "preview.handType": "pair", "preview.score": 60 } },
+    { "screenshot": "playing-selected" },
+    { "act": "playHand" },
+    { "advance": 400 },
+    { "expect": { "phase": "shop", "score": 60, "shop": { "len": 4 } } },
+    { "screenshot": "shop-view" }
+  ]
+}

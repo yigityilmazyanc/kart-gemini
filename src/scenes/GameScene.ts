@@ -1,46 +1,32 @@
 import { exposeHook } from "@agi/kit";
-import { FONT, SceneGate, coverImage, floatText, loadManifest, makeButton, moveTo, urlParams } from "@agi/kit/phaser";
+import { type FloatOptions, SceneGate, coverImage, floatText, loadManifest, urlParams } from "@agi/kit/phaser";
 import Phaser from "phaser";
 import manifest from "../../assets/manifest.json";
-import { StarGame } from "../logic/game";
-import { type Kind, type Spawn, speedAt } from "../logic/spawn";
+import { BOSS_RULES, type BossRuleId, TALISMANS, type TalismanId } from "../logic/catalog";
+import { SimyaGame } from "../logic/game";
+import { HandView } from "./HandView";
+import { renderEndScreen, renderShopTable } from "./ShopPanel";
+import { renderHandsModal, renderSidebar, renderTalismanShelf } from "./SidebarPanel";
 
-export const W = 720;
-export const H = 1280;
-
-const BASKET_Y = 1110;
-const BASKET_HALF = 90;
-/** Basket speed toward its target, px/s. */
-const BASKET_SPEED = 1400;
-/** Distance of one left()/right() step, px. */
-const STEP = 140;
-const SPAWN_Y = -50;
-
-interface Item {
-  kind: Kind;
-  sprite: Phaser.Physics.Arcade.Image;
-}
+export const W = 1280;
+export const H = 720;
 
 export class GameScene extends Phaser.Scene {
-  private rules!: StarGame;
+  private rules!: SimyaGame;
   private gate = new SceneGate();
-  private items = new Set<Item>();
-  /** Invisible physics body: moves only inside the fixed step. */
-  private basket!: Phaser.Physics.Arcade.Image;
-  /** What the player sees; follows the body in x, and only this one gets the real-clock "caught" tween. */
-  private basketView!: Phaser.GameObjects.Image;
-  private itemGroup!: Phaser.Physics.Arcade.Group;
-  private targetX = W / 2;
-  /** `?lane=0..100` puts every spawn on one vertical line (test setups). */
-  private lane?: number;
-  private scoreText!: Phaser.GameObjects.Text;
-  private hearts: Phaser.GameObjects.Image[] = [];
+  private uiLayer!: Phaser.GameObjects.Container;
+  private handLayer!: Phaser.GameObjects.Container;
+  private panelLayer!: Phaser.GameObjects.Container;
+  private modalLayer!: Phaser.GameObjects.Container;
+  private handView!: HandView;
+  private activeFloats: Phaser.GameObjects.Text[] = [];
+  private showingHandsModal = false;
+  private infoMessage = "";
 
   constructor() {
     super("game");
   }
 
-  /** Every asset in assets/manifest.json is loaded under its id (built by: npm run assets -- <game>). */
   preload(): void {
     loadManifest(this, manifest);
   }
@@ -48,155 +34,326 @@ export class GameScene extends Phaser.Scene {
   create(data: { seed?: number } = {}): void {
     const q = urlParams();
     this.gate.reset();
-    // `?manual`: no real-time frames at all, the game only moves through advance() (exact, repeatable numbers in play-check)
     if (q.has("manual")) this.game.loop.sleep();
-    this.items.clear();
-    this.hearts = [];
-    this.targetX = W / 2;
-    this.lane = q.has("lane") ? q.int("lane", 50, 0, 100) / 100 : undefined;
-    this.rules = new StarGame(data.seed ?? q.int("seed", Date.now() % 100000), {
-      lives: q.int("lives", 3, 1, 9),
-      bombChance: q.has("bombs") ? q.int("bombs", 25, 0, 100) / 100 : undefined,
+
+    const validTalismanIds = TALISMANS.map((t) => t.id);
+    const validBossIds = BOSS_RULES.map((b) => b.id);
+    const seed = data.seed ?? q.int("seed", Date.now() % 100000);
+    const startTalismans = q.list("talismans", validTalismanIds) as TalismanId[];
+    const bossParam = q.str("boss", "");
+    const pinnedBoss = validBossIds.includes(bossParam as BossRuleId) ? (bossParam as BossRuleId) : undefined;
+
+    this.rules = new SimyaGame(seed, {
+      hands: q.has("hands") ? q.int("hands", 4, 1, 20) : undefined,
+      discards: q.has("discards") ? q.int("discards", 3, 0, 20) : undefined,
+      gold: q.has("gold") ? q.int("gold", 6, 0, 999) : undefined,
+      target: q.has("target") ? q.int("target", 210, 10, 999999) : undefined,
+      maxRounds: q.has("rounds") ? q.int("rounds", 9, 1, 30) : undefined,
+      talismans: startTalismans.length > 0 ? startTalismans : undefined,
+      bossRule: pinnedBoss,
     });
 
+    this.showingHandsModal = false;
+    this.activeFloats = [];
+    this.infoMessage = `Kartlara dokunarak 1-${this.rules.maxSelectable()} kart seç, sonra Eli Oyna veya Değiştir.`;
+
     coverImage(this, W / 2, H / 2, "bg", W, H);
-    this.basket = this.physics.add.image(W / 2, BASKET_Y, "basket").setImmovable(true).setVisible(false);
-    this.basketView = this.add.image(W / 2, BASKET_Y, "basket").setDepth(10);
-    (this.basket.body as Phaser.Physics.Arcade.Body).setSize(150, 30).setOffset(15, 8);
-    this.drawHud();
+    this.uiLayer = this.add.container(0, 0).setDepth(10);
+    this.handLayer = this.add.container(0, 0).setDepth(20);
+    this.panelLayer = this.add.container(0, 0).setDepth(30);
+    this.modalLayer = this.add.container(0, 0).setDepth(100);
 
-    this.itemGroup = this.physics.add.group();
-    this.physics.add.overlap(this.basket, this.itemGroup, (_b, o) => this.onCatch(o as Phaser.Physics.Arcade.Image));
-    // The world steps at a fixed 60 Hz whatever the display does: all game time and movement run from here,
-    // so the same seed plays out the same way on every device (and under advance()).
-    this.physics.world.on(Phaser.Physics.Arcade.Events.WORLD_STEP, (dt: number) => this.step(dt * 1000));
+    this.handView = new HandView(this, this.handLayer, {
+      onSelectCard: (id) => this.onSelectCard(id),
+      onPlayHand: () => this.onPlayHand(),
+      onDiscard: () => this.onDiscard(),
+      onSelectBest: () => this.onSelectBest(),
+      onSortHand: () => this.onSortHand(),
+    });
 
-    this.input.on("pointerdown", (p: Phaser.Input.Pointer) => this.moveBasket(p.x));
-    this.input.on("pointermove", (p: Phaser.Input.Pointer) => p.isDown && this.moveBasket(p.x));
-    this.input.keyboard?.on("keydown-LEFT", () => this.left());
-    this.input.keyboard?.on("keydown-A", () => this.left());
-    this.input.keyboard?.on("keydown-RIGHT", () => this.right());
-    this.input.keyboard?.on("keydown-D", () => this.right());
+    this.setupKeyboard();
+    this.renderAll();
 
-    const hint = this.add.text(W / 2, 960, "Sepeti sürükle", { fontFamily: FONT, fontSize: "30px", color: "#ffffff" }).setOrigin(0.5).setAlpha(0.7).setDepth(20);
-    this.tweens.add({ targets: hint, alpha: 0, delay: 2500, duration: 600 });
-
-    exposeHook(() => this.state(), {
-      moveTo: this.gate.guard((x: number) => this.moveBasket(x)),
-      left: this.gate.guard(() => this.left()),
-      right: this.gate.guard(() => this.right()),
-      restart: (seed?: number) => this.restart(seed),
-    }, this.game);
+    exposeHook(
+      () => this.state(),
+      {
+        selectCard: this.gate.guard((idxOrCode: number | string) => this.onSelectCard(idxOrCode)),
+        selectCards: this.gate.guard((list: (number | string)[]) => this.onSelectCards(list)),
+        selectBest: this.gate.guard(() => this.onSelectBest()),
+        clearSelection: this.gate.guard(() => this.onClearSelection()),
+        playHand: this.gate.guard(() => this.onPlayHand()),
+        discardSelected: this.gate.guard(() => this.onDiscard()),
+        sortHand: this.gate.guard((mode?: "rank" | "suit") => this.onSortHand(mode)),
+        buyItem: this.gate.guard((idxOrId: number | string) => this.onBuyItem(idxOrId)),
+        sellTalisman: this.gate.guard((idxOrId: number | string) => this.onSellTalisman(idxOrId)),
+        rerollShop: this.gate.guard(() => this.onRerollShop()),
+        nextRound: this.gate.guard(() => this.onNextRound()),
+        toggleHandsModal: this.gate.guard(() => this.onToggleHandsModal()),
+        restart: (newSeed?: number) => this.restart(newSeed),
+      },
+      this.game,
+    );
   }
 
-  // ---------- state ----------
+  private setupKeyboard(): void {
+    this.input.keyboard?.on("keydown-ENTER", this.gate.guard(() => this.onPlayHand()));
+    this.input.keyboard?.on("keydown-SPACE", this.gate.guard(() => this.onSelectBest()));
+    this.input.keyboard?.on("keydown-BACKSPACE", this.gate.guard(() => this.onDiscard()));
+    this.input.keyboard?.on("keydown-S", this.gate.guard(() => this.onSortHand()));
+  }
 
-  /** Small text-friendly snapshot for agents: the 10 lowest objects are the ones that matter. */
+  private showFloat(
+    x: number,
+    y: number,
+    text: string,
+    style: Phaser.Types.GameObjects.Text.TextStyle = {},
+    opts?: FloatOptions,
+  ): void {
+    const t = floatText(this, x, y, text, style, opts);
+    this.activeFloats.push(t);
+  }
+
+  private clearFloats(): void {
+    for (const t of this.activeFloats) {
+      if (t.active) t.destroy();
+    }
+    this.activeFloats = [];
+  }
+
+  // ---------- Agent Hook State ----------
+
   private state() {
-    const objects = [...this.items]
-      .map((i) => ({ kind: i.kind, x: Math.round(i.sprite.x), y: Math.round(i.sprite.y) }))
-      .sort((a, b) => b.y - a.y)
-      .slice(0, 10);
+    const preview = this.rules.scoreSelection();
+    const last = this.rules.lastHand;
     return {
       seed: this.rules.seed,
       phase: this.rules.phase,
+      round: this.rules.round,
+      act: this.rules.act,
+      maxRounds: this.rules.maxRounds,
+      bossRule: this.rules.bossRule,
       score: this.rules.score,
-      lives: this.rules.lives,
-      speed: Math.round(this.rules.speed),
-      basketX: Math.round(this.basket.x),
-      elapsed: Math.round(this.rules.elapsed),
-      objects,
+      target: this.rules.target,
+      totalScore: this.rules.totalScore,
+      handsLeft: this.rules.handsLeft,
+      discardsLeft: this.rules.discardsLeft,
+      gold: this.rules.gold,
+      rerollCost: this.rules.rerollCost,
+      hand: this.rules.hand.map((c) => c.code),
+      selected: this.rules.selectedCards().map((c) => c.code),
+      preview: preview
+        ? {
+            handType: preview.handType,
+            handName: preview.handName,
+            chips: preview.chips,
+            mult: preview.mult,
+            score: preview.score,
+          }
+        : null,
+      lastHand: last
+        ? {
+            handType: last.handType,
+            handName: last.handName,
+            chips: last.chips,
+            mult: last.mult,
+            score: last.score,
+          }
+        : null,
+      talismans: [...this.rules.talismans],
+      shop:
+        this.rules.phase === "shop"
+          ? this.rules.shop.map((s) => ({
+              id: s.id,
+              kind: s.kind,
+              name: s.name,
+              cost: s.cost,
+              bought: s.bought,
+            }))
+          : [],
+      deckCount: this.rules.drawPile.length,
+      sortMode: this.rules.sortMode,
+      handsModal: this.showingHandsModal,
     };
   }
 
-  // ---------- actions (touch, keyboard and agent hook all come through here) ----------
+  // ---------- Actions ----------
 
-  /** Send the basket toward x (clamped to the screen). False when the round is over, x is not a number, or the scene is leaving. */
-  private moveBasket(x: number): boolean {
-    if (!this.gate.open || this.rules.phase !== "playing" || !Number.isFinite(x)) return false;
-    this.targetX = Math.min(Math.max(x, BASKET_HALF), W - BASKET_HALF);
+  private onSelectCard(idxOrCode: number | string): boolean {
+    if (this.rules.phase !== "playing") return false;
+    const card = this.rules.resolveHandCard(idxOrCode);
+    if (!card) return false;
+    if (!this.rules.selectedIds.has(card.id) && this.rules.selectedIds.size >= this.rules.maxSelectable()) {
+      this.showFloat(800, 410, `En fazla ${this.rules.maxSelectable()} kart!`, { color: "#ff6b6b", fontSize: "26px" });
+      return false;
+    }
+    const ok = this.rules.toggleSelect(card.id);
+    if (!ok) return false;
+    this.renderAll();
     return true;
   }
 
-  private left(): boolean {
-    return this.moveBasket(this.targetX - STEP);
+  private onSelectCards(list: (number | string)[]): boolean {
+    const ok = this.rules.selectCards(list);
+    this.renderAll();
+    return ok;
   }
 
-  private right(): boolean {
-    return this.moveBasket(this.targetX + STEP);
+  private onSelectBest(): boolean {
+    const ok = this.rules.selectBest();
+    if (ok) {
+      const p = this.rules.scoreSelection();
+      if (p) this.infoMessage = `En iyi el seçildi: ${p.handName} (${p.chips} Fiş × ${p.mult} Çarpan = ${p.score} Puan)`;
+      this.renderAll();
+    }
+    return ok;
   }
 
-  /** Start a new round; with a seed it replays that exact round. */
+  private onClearSelection(): boolean {
+    const ok = this.rules.clearSelection();
+    this.renderAll();
+    return ok;
+  }
+
+  private onSortHand(mode?: "rank" | "suit"): boolean {
+    const ok = this.rules.sortHand(mode);
+    if (ok) this.renderAll();
+    return ok;
+  }
+
+  private onPlayHand(): boolean {
+    if (this.rules.phase !== "playing") return false;
+    if (this.rules.selectedIds.size === 0) {
+      this.showFloat(800, 420, "Önce en az 1 kart seç!", { color: "#ffd166", fontSize: "28px" });
+      return false;
+    }
+    const report = this.rules.playHand();
+    if (!report) return false;
+
+    this.infoMessage = `${report.handName}: ${report.chips} Fiş × ${report.mult} Çarpan = +${report.score} Puan!`;
+    if (this.rules.phase !== "playing") {
+      this.clearFloats();
+    }
+    this.renderAll();
+    if (this.rules.phase === "playing") {
+      this.showFloat(800, 270, `${report.handName}! +${report.score}`, { color: "#ffd166", fontSize: "38px" }, { rise: -55, duration: 950 });
+    }
+    return true;
+  }
+
+  private onDiscard(): boolean {
+    if (this.rules.phase !== "playing") return false;
+    if (this.rules.discardsLeft <= 0) {
+      this.showFloat(800, 420, "Değiştirme hakkın kalmadı!", { color: "#ff6b6b", fontSize: "28px" });
+      return false;
+    }
+    if (this.rules.selectedIds.size === 0) {
+      this.showFloat(800, 420, "Değiştirmek için kart seç!", { color: "#ffd166", fontSize: "28px" });
+      return false;
+    }
+    const ok = this.rules.discardSelected();
+    if (ok) {
+      if (this.rules.phase !== "playing") {
+        this.clearFloats();
+        this.infoMessage = "Destede ve elde kart kalmadı! Sınav başarısız.";
+      } else {
+        this.infoMessage = "Seçilen kartlar değiştirildi ve yeni kartlar çekildi.";
+      }
+      this.renderAll();
+      if (this.rules.phase === "playing") {
+        this.showFloat(800, 390, "Kartlar Değiştirildi", { color: "#a8dadc", fontSize: "28px" });
+      }
+    }
+    return ok;
+  }
+
+  private onBuyItem(idxOrId: number | string): boolean {
+    const ok = this.rules.buyItem(idxOrId);
+    if (!ok) {
+      this.showFloat(800, 340, "Satın alınamadı (Yetersiz altın veya dolu raf)!", { color: "#ff6b6b", fontSize: "26px" });
+      return false;
+    }
+    this.infoMessage = "Eşya satın alındı ve masana eklendi!";
+    this.renderAll();
+    this.showFloat(800, 290, "Satın Alındı!", { color: "#ffd166", fontSize: "32px" });
+    return true;
+  }
+
+  private onSellTalisman(idxOrId: number | string): boolean {
+    const ok = this.rules.sellTalisman(idxOrId);
+    if (!ok) return false;
+    this.infoMessage = "Tılsım satıldı.";
+    this.renderAll();
+    this.showFloat(800, 140, "Tılsım Satıldı", { color: "#ffd166", fontSize: "26px" });
+    return true;
+  }
+
+  private onRerollShop(): boolean {
+    const ok = this.rules.rerollShop();
+    if (!ok) {
+      this.showFloat(800, 580, "Yenilemek için yeterli altın yok!", { color: "#ff6b6b", fontSize: "26px" });
+      return false;
+    }
+    this.infoMessage = "Simya Pazarı ürünleri yenilendi!";
+    this.renderAll();
+    return true;
+  }
+
+  private onNextRound(): boolean {
+    const ok = this.rules.nextRound();
+    if (!ok) return false;
+    this.clearFloats();
+    this.infoMessage = `Tur ${this.rules.round} (${this.rules.title}) başladı! 1-${this.rules.maxSelectable()} kart seç, hedef: ${this.rules.target}`;
+    this.renderAll();
+    return true;
+  }
+
+  private onToggleHandsModal(): boolean {
+    this.showingHandsModal = !this.showingHandsModal;
+    renderHandsModal(this, this.modalLayer, this.rules, this.showingHandsModal, W, H, () => this.onToggleHandsModal());
+    return this.showingHandsModal;
+  }
+
   private restart(seed?: number): boolean {
-    const s = Number.isInteger(seed) && (seed as number) >= 0 ? seed : undefined;
+    this.clearFloats();
+    const s = Number.isInteger(seed) && (seed as number) >= 0 ? seed : Math.floor(Math.random() * 100000);
     return this.gate.leave(() => this.scene.restart({ seed: s }));
   }
 
-  // ---------- game loop ----------
+  // ---------- Rendering ----------
 
-  /** One fixed physics step of `ms`: move the basket, spawn what is due, drop what left the screen. */
-  private step(ms: number): void {
-    if (this.rules.phase !== "playing") return;
-    const dx = this.targetX - this.basket.x;
-    const reach = (BASKET_SPEED * ms) / 1000;
-    this.basket.x += Math.abs(dx) <= reach ? dx : Math.sign(dx) * reach;
-    this.basketView.x = this.basket.x;
-    for (const s of this.rules.tick(ms)) this.spawn(s);
-    for (const item of [...this.items]) {
-      if (item.sprite.y > H + 60) this.remove(item);
-    }
-  }
+  private renderAll(): void {
+    this.uiLayer.removeAll(true);
+    this.panelLayer.removeAll(true);
 
-  private spawn(s: Spawn): void {
-    const sprite: Phaser.Physics.Arcade.Image = this.itemGroup.create((this.lane ?? s.x) * W, SPAWN_Y, s.kind);
-    sprite.setDepth(5).setVelocityY(speedAt(s.at));
-    sprite.body?.setCircle(26, 10, 10);
-    this.items.add({ kind: s.kind, sprite });
-  }
+    const sidebarCb = {
+      onToggleHandsModal: () => this.onToggleHandsModal(),
+      onRestart: () => this.restart(),
+      onSellTalisman: (idx: number) => this.onSellTalisman(idx),
+      onInspectTalisman: (info: string) => {
+        this.infoMessage = info;
+        this.renderAll();
+      },
+    };
 
-  private remove(item: Item): void {
-    this.items.delete(item);
-    item.sprite.destroy();
-  }
+    renderSidebar(this, this.uiLayer, this.rules, sidebarCb);
+    renderTalismanShelf(this, this.uiLayer, this.rules, this.infoMessage, sidebarCb);
 
-  private onCatch(sprite: Phaser.Physics.Arcade.Image): void {
-    const item = [...this.items].find((i) => i.sprite === sprite);
-    if (!item || this.rules.phase !== "playing") return;
-    const { x, y } = sprite;
-    this.remove(item);
-    moveTo(this, this.basketView, { y: BASKET_Y + 12, duration: 70, yoyo: true });
-    if (item.kind === "star") {
-      this.rules.catchStar();
-      floatText(this, x, y - 40, "+1", { color: "#ffd166" });
+    if (this.rules.phase === "playing") {
+      this.handView.render(this.rules);
     } else {
-      this.rules.catchBomb();
-      floatText(this, x, y - 40, "-1 can", { color: "#ff6b6b" }, { rise: -60 });
-      this.cameras.main.shake(180, 0.012);
+      this.handView.clear();
+      if (this.rules.phase === "shop") {
+        renderShopTable(this, this.panelLayer, this.rules, {
+          onBuyItem: (idx) => this.onBuyItem(idx),
+          onRerollShop: () => this.onRerollShop(),
+          onNextRound: () => this.onNextRound(),
+          onRestart: () => this.restart(),
+        });
+      } else {
+        renderEndScreen(this, this.panelLayer, this.rules, () => this.restart());
+      }
     }
-    this.refreshHud();
-    if (this.rules.lives === 0) this.showGameOver();
-  }
 
-  // ---------- drawing ----------
-
-  private drawHud(): void {
-    this.scoreText = this.add.text(30, 28, "", { fontFamily: FONT, fontSize: "48px", color: "#ffffff", fontStyle: "bold", stroke: "#0d0a1a", strokeThickness: 6 }).setDepth(20);
-    for (let i = 0; i < this.rules.lives; i++) {
-      this.hearts.push(this.add.image(W - 50 - i * 58, 56, "heart").setDepth(20));
-    }
-    this.refreshHud();
-  }
-
-  private refreshHud(): void {
-    this.scoreText.setText(`Puan ${this.rules.score}`);
-    this.hearts.forEach((h, i) => h.setAlpha(i < this.rules.lives ? 1 : 0.2));
-  }
-
-  private showGameOver(): void {
-    this.physics.pause();
-    this.add.rectangle(W / 2, H / 2, W, H, 0x000000, 0.6).setDepth(50);
-    this.add.text(W / 2, 480, "Oyun Bitti", { fontFamily: FONT, fontSize: "76px", color: "#ffffff", fontStyle: "bold", stroke: "#0d0a1a", strokeThickness: 8 }).setOrigin(0.5).setDepth(51);
-    this.add.text(W / 2, 590, `Puan ${this.rules.score}`, { fontFamily: FONT, fontSize: "52px", color: "#ffd166", fontStyle: "bold" }).setOrigin(0.5).setDepth(51);
-    makeButton(this, W / 2, 740, "Tekrar", 0x1b998b, () => this.restart(), 280, 80).setDepth(51);
+    renderHandsModal(this, this.modalLayer, this.rules, this.showingHandsModal, W, H, () => this.onToggleHandsModal());
   }
 }

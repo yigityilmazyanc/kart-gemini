@@ -1,59 +1,17 @@
 {
-  "viewport": {
-    "width": 720,
-    "height": 1280
-  },
-  "url": "?seed=7",
+  "viewport": { "width": 1280, "height": 720 },
+  "url": "?seed=7&hands=1&target=5000",
   "steps": [
-    {
-      "expect": {
-        "phase": "playing",
-        "lives": 3
-      }
-    },
-    {
-      "advance": 90000
-    },
-    {
-      "expect": {
-        "phase": "over",
-        "lives": 0,
-        "basketX": 360
-      }
-    },
-    {
-      "act": "left"
-    },
-    {
-      "advance": 500
-    },
-    {
-      "expect": {
-        "phase": "over",
-        "basketX": 360
-      }
-    },
-    {
-      "screenshot": "over"
-    },
-    {
-      "click": [
-        360,
-        740
-      ]
-    },
-    {
-      "advance": 200
-    },
-    {
-      "expect": {
-        "phase": "playing",
-        "score": 0,
-        "lives": 3,
-        "elapsed": {
-          "lt": 1000
-        }
-      }
-    }
+    { "expect": { "phase": "playing", "handsLeft": 1 } },
+    { "act": "selectCard", "args": [0] },
+    { "act": "playHand" },
+    { "advance": 300 },
+    { "expect": { "phase": "over", "handsLeft": 0 } },
+    { "act": "selectCard", "args": [0] },
+    { "expect": { "phase": "over", "selected": { "len": 0 } } },
+    { "screenshot": "over" },
+    { "click": [805, 565] },
+    { "advance": 300 },
+    { "expect": { "phase": "playing", "score": 0, "handsLeft": 1 } }
   ]
 }

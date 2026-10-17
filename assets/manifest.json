@@ -1,22 +1,51 @@
 {
   "style": {
     "palette": {
-      "skyTop": "#0b1030",
-      "skyBottom": "#2a2a78",
+      "bgDark": "#090d1c",
+      "feltMid": "#13292a",
+      "feltLight": "#1d423e",
+      "panelDark": "#121629",
       "gold": "#ffd166",
-      "goldDark": "#e09f1f",
+      "goldDark": "#c98a1b",
       "straw": "#d99a4e",
       "strawDark": "#9a5f2a",
       "ink": "#2b2d42",
-      "red": "#d7263d",
-      "spark": "#ffb703"
+      "red": "#e63946",
+      "spark": "#ffb703",
+      "suitH": "#e63946",
+      "suitD": "#f77f00",
+      "suitS": "#3a506b",
+      "suitC": "#2a9d8f"
     }
   },
   "assets": [
-    {"id":"bg","backend":"svg","template":"bg","size":[720,1280]},
-    {"id":"basket","backend":"svg","template":"basket","size":[180,110]},
-    {"id":"star","backend":"svg","template":"star","size":[72,72]},
-    {"id":"bomb","backend":"svg","template":"bomb","size":[72,72]},
-    {"id":"heart","backend":"svg","template":"heart","size":[48,48]}
+    { "id": "bg", "backend": "svg", "template": "bg", "size": [1280, 720] },
+    { "id": "card-front", "backend": "svg", "template": "card", "params": { "variant": "front" }, "size": [140, 196] },
+    { "id": "card-bonus", "backend": "svg", "template": "card", "params": { "variant": "bonus" }, "size": [140, 196] },
+    { "id": "card-mult", "backend": "svg", "template": "card", "params": { "variant": "mult" }, "size": [140, 196] },
+    { "id": "card-steel", "backend": "svg", "template": "card", "params": { "variant": "steel" }, "size": [140, 196] },
+    { "id": "card-gold", "backend": "svg", "template": "card", "params": { "variant": "gold" }, "size": [140, 196] },
+    { "id": "card-back", "backend": "svg", "template": "card", "params": { "variant": "back" }, "size": [140, 196] },
+    { "id": "suit-H", "backend": "svg", "template": "suit", "params": { "suit": "H" }, "size": [64, 64] },
+    { "id": "suit-D", "backend": "svg", "template": "suit", "params": { "suit": "D" }, "size": [64, 64] },
+    { "id": "suit-S", "backend": "svg", "template": "suit", "params": { "suit": "S" }, "size": [64, 64] },
+    { "id": "suit-C", "backend": "svg", "template": "suit", "params": { "suit": "C" }, "size": [64, 64] },
+    { "id": "talisman-frame", "backend": "svg", "template": "talisman", "params": { "kind": "frame" }, "size": [130, 112] },
+    { "id": "icon-scroll", "backend": "svg", "template": "talisman", "params": { "kind": "scroll" }, "size": [64, 64] },
+    { "id": "icon-potion", "backend": "svg", "template": "talisman", "params": { "kind": "potion" }, "size": [64, 64] },
+    { "id": "icon-coin", "backend": "svg", "template": "talisman", "params": { "kind": "coin" }, "size": [44, 44] },
+    { "id": "icon-mirror", "backend": "svg", "template": "talisman", "params": { "kind": "mirror" }, "size": [56, 56] },
+    { "id": "icon-prism", "backend": "svg", "template": "talisman", "params": { "kind": "prism" }, "size": [56, 56] },
+    { "id": "icon-lantern", "backend": "svg", "template": "talisman", "params": { "kind": "lantern" }, "size": [56, 56] },
+    { "id": "icon-sword", "backend": "svg", "template": "talisman", "params": { "kind": "sword" }, "size": [56, 56] },
+    { "id": "icon-pendulum", "backend": "svg", "template": "talisman", "params": { "kind": "pendulum" }, "size": [56, 56] },
+    { "id": "icon-compass", "backend": "svg", "template": "talisman", "params": { "kind": "compass" }, "size": [56, 56] },
+    { "id": "icon-scale", "backend": "svg", "template": "talisman", "params": { "kind": "scale" }, "size": [56, 56] },
+    { "id": "icon-hourglass", "backend": "svg", "template": "talisman", "params": { "kind": "hourglass" }, "size": [56, 56] },
+    { "id": "icon-lens", "backend": "svg", "template": "talisman", "params": { "kind": "lens" }, "size": [56, 56] },
+    { "id": "star", "backend": "svg", "template": "star", "size": [56, 56] },
+    { "id": "heart", "backend": "svg", "template": "heart", "size": [56, 56] },
+    { "id": "orb", "backend": "svg", "template": "orb", "size": [56, 56] },
+    { "id": "crown", "backend": "svg", "template": "crown", "size": [56, 56] }
   ]
 }

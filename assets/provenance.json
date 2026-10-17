@@ -4,39 +4,223 @@
     "model": "svg-template",
     "template": "bg",
     "license": "project-original",
-    "key": "298e5b386f3b67c7",
-    "sha256": "0319997622e15749"
-  },
-  "basket": {
-    "backend": "svg",
-    "model": "svg-template",
-    "template": "basket",
-    "license": "project-original",
-    "key": "fb19d7640d7ab9fa",
-    "sha256": "35a550cfc703a1b2"
+    "key": "635199675999b322",
+    "sha256": "9f11126fe9d0de14"
   },
   "star": {
     "backend": "svg",
     "model": "svg-template",
     "template": "star",
     "license": "project-original",
-    "key": "1bd533f10ff81010",
-    "sha256": "6c743835fe83b5ab"
-  },
-  "bomb": {
-    "backend": "svg",
-    "model": "svg-template",
-    "template": "bomb",
-    "license": "project-original",
-    "key": "c0c79b985fb19340",
-    "sha256": "414fa33d39395289"
+    "key": "a678841b3a88d971",
+    "sha256": "11818839c99f0b58"
   },
   "heart": {
     "backend": "svg",
     "model": "svg-template",
     "template": "heart",
     "license": "project-original",
-    "key": "036e2d6bcdc23036",
-    "sha256": "8020ec209c07ef93"
+    "key": "104e7369bf20ddd1",
+    "sha256": "070f2904fcb7b921"
+  },
+  "card-front": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "card",
+    "license": "project-original",
+    "key": "35be7a833ae98066",
+    "sha256": "c6e84dd276190c6b"
+  },
+  "card-bonus": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "card",
+    "license": "project-original",
+    "key": "1072bb36b791cabf",
+    "sha256": "df8c0b75a71a8c25"
+  },
+  "card-mult": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "card",
+    "license": "project-original",
+    "key": "9c3f094bdc0377b9",
+    "sha256": "b25a1e8c2e8b77c9"
+  },
+  "card-steel": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "card",
+    "license": "project-original",
+    "key": "bc7df9f35713f601",
+    "sha256": "eaa9c4a70981beea"
+  },
+  "card-gold": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "card",
+    "license": "project-original",
+    "key": "978520ed474b10f3",
+    "sha256": "afb0ca315fc5ec81"
+  },
+  "card-back": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "card",
+    "license": "project-original",
+    "key": "eee01f39e4bca361",
+    "sha256": "3eacbae869fa5f2c"
+  },
+  "suit-H": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "suit",
+    "license": "project-original",
+    "key": "a2ecb7a270dc1074",
+    "sha256": "46d6386553aa5c69"
+  },
+  "suit-D": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "suit",
+    "license": "project-original",
+    "key": "29ce4a1aa202237f",
+    "sha256": "205b1948fb888ac3"
+  },
+  "suit-S": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "suit",
+    "license": "project-original",
+    "key": "c9d9739bd4a8c655",
+    "sha256": "f4fbe7e1bcebfa0f"
+  },
+  "suit-C": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "suit",
+    "license": "project-original",
+    "key": "2ea5d948121ed5cf",
+    "sha256": "d97d18df66f3f57c"
+  },
+  "talisman-frame": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "talisman",
+    "license": "project-original",
+    "key": "bc403d5abccc86f2",
+    "sha256": "b5cb275048b62a90"
+  },
+  "icon-scroll": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "talisman",
+    "license": "project-original",
+    "key": "220d7ae636f6b9b5",
+    "sha256": "e88a02d5877c03dd"
+  },
+  "icon-potion": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "talisman",
+    "license": "project-original",
+    "key": "b89c28c4cd222a1a",
+    "sha256": "a7161dde77c35612"
+  },
+  "icon-coin": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "talisman",
+    "license": "project-original",
+    "key": "cdbf37c6b589a1c8",
+    "sha256": "da197a008d82578d"
+  },
+  "icon-mirror": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "talisman",
+    "license": "project-original",
+    "key": "e1947c82d962ecd5",
+    "sha256": "4b7314af713f8719"
+  },
+  "icon-prism": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "talisman",
+    "license": "project-original",
+    "key": "a69eda6087f0c306",
+    "sha256": "f2f521d433f577ff"
+  },
+  "icon-lantern": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "talisman",
+    "license": "project-original",
+    "key": "721ed260463a7638",
+    "sha256": "9753215078939d0f"
+  },
+  "icon-sword": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "talisman",
+    "license": "project-original",
+    "key": "ce2d4b4657614e1c",
+    "sha256": "5d3db03b7f500832"
+  },
+  "icon-pendulum": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "talisman",
+    "license": "project-original",
+    "key": "498a80b8eb50177e",
+    "sha256": "e9e07a2bb55f4aa0"
+  },
+  "icon-compass": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "talisman",
+    "license": "project-original",
+    "key": "f64137dcba14197e",
+    "sha256": "388a9a2201ee823f"
+  },
+  "icon-scale": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "talisman",
+    "license": "project-original",
+    "key": "c4f3fbf51bd83f04",
+    "sha256": "89e6bc0e3517db53"
+  },
+  "icon-hourglass": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "talisman",
+    "license": "project-original",
+    "key": "afe2c24c2fa501fa",
+    "sha256": "147f95f8f15e5856"
+  },
+  "icon-lens": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "talisman",
+    "license": "project-original",
+    "key": "f47d586c604b5197",
+    "sha256": "62040c4bedafed85"
+  },
+  "orb": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "orb",
+    "license": "project-original",
+    "key": "e31f3d3a70846af4",
+    "sha256": "68ef97838ee4148c"
+  },
+  "crown": {
+    "backend": "svg",
+    "model": "svg-template",
+    "template": "crown",
+    "license": "project-original",
+    "key": "65eceacead74568f",
+    "sha256": "637b519c0609fbc7"
   }
 }

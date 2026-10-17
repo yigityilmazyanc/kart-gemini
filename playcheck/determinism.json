@@ -1,11 +1,52 @@
 {
-  "viewport": { "width": 720, "height": 1280 },
-  "url": "?seed=7&bombs=40&lane=50",
+  "viewport": { "width": 1280, "height": 720 },
+  "url": "?seed=42&target=900",
   "steps": [
-    { "advance": 12000 },
-    { "expect": { "seed": 7, "elapsed": 10133, "phase": "over", "lives": 0, "score": 5 } },
-    { "act": "restart", "args": [7] },
-    { "advance": 12000 },
-    { "expect": { "seed": 7, "elapsed": 10133, "phase": "over", "lives": 0, "score": 5 } }
+    {
+      "expect": {
+        "seed": 42,
+        "handsLeft": 4,
+        "score": 0,
+        "hand": ["AS", "KH", "JH", "10S", "8D", "7D", "5C", "4D"]
+      }
+    },
+    { "act": "selectBest" },
+    { "expect": { "selected": ["AS"], "preview.handType": "high_card", "preview.score": 16 } },
+    { "act": "playHand" },
+    { "advance": 200 },
+    {
+      "expect": {
+        "seed": 42,
+        "handsLeft": 3,
+        "score": 16,
+        "lastHand.handType": "high_card",
+        "lastHand.score": 16,
+        "hand": ["AD", "KH", "JH", "10S", "8D", "7D", "5C", "4D"]
+      }
+    },
+    { "act": "restart", "args": [42] },
+    { "advance": 200 },
+    {
+      "expect": {
+        "seed": 42,
+        "handsLeft": 4,
+        "score": 0,
+        "hand": ["AS", "KH", "JH", "10S", "8D", "7D", "5C", "4D"]
+      }
+    },
+    { "act": "selectBest" },
+    { "expect": { "selected": ["AS"], "preview.handType": "high_card", "preview.score": 16 } },
+    { "act": "playHand" },
+    { "advance": 200 },
+    {
+      "expect": {
+        "seed": 42,
+        "handsLeft": 3,
+        "score": 16,
+        "lastHand.handType": "high_card",
+        "lastHand.score": 16,
+        "hand": ["AD", "KH", "JH", "10S", "8D", "7D", "5C", "4D"]
+      }
+    }
   ]
 }
